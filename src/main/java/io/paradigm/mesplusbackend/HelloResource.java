@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+
 public class HelloResource {
 
     @Autowired
@@ -21,12 +22,14 @@ public class HelloResource {
     private MyUserDetailsService userDetailsService;
     @Autowired
     private JwtUtil jwtTokenUtil;
+
+
     @RequestMapping("/hello")
     public String hello(){
         return "Hello World";
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
+
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         /// Authenticate username and password

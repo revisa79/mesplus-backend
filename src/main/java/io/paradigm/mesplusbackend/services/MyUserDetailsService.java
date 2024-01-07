@@ -10,12 +10,14 @@ import java.util.ArrayList;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
+    /// AuthenticationProvider
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         /// Check if the username is in your list/database
         if (!username.equals("alvin")) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
+
         return new User("alvin","foo", new ArrayList<>());
     }
 }
