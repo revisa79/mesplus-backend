@@ -23,7 +23,6 @@ public class HelloResource {
     @Autowired
     private JwtUtil jwtTokenUtil;
 
-
     @RequestMapping("/hello")
     public String hello(){
         return "Hello World";
@@ -32,7 +31,7 @@ public class HelloResource {
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
-        /// Authenticate username and password
+        /// Authentication of username and password from client happened in try-catch below
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
@@ -40,9 +39,12 @@ public class HelloResource {
         } catch (BadCredentialsException e) {
             throw new Exception("Incorrect username or password", e);
         }
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+
+        /// We only get the UserDetail here because generating the token accepts UserDetails object
+            final UserDetails userDetails = userDetailsService
+                    .loadUserByUsername(authenticationRequest.getUsername());
+            final String jwt = jwtTokenUtil.generateToken(userDetails);
+            return ResponseEntity.ok(new AuthenticationResponse(jwt));
+
     }
 }

@@ -35,7 +35,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and() /// To add CorsConfigurationSource below
                 .csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate","/","/assets/**").permitAll()
+                .authorizeRequests().antMatchers("/authenticate","/*","/assets/**").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -52,7 +52,6 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         return NoOpPasswordEncoder.getInstance();
     }
 
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -64,5 +63,4 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
         return source;
     }
-
 }

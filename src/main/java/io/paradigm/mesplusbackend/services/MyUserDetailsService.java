@@ -1,26 +1,44 @@
 package io.paradigm.mesplusbackend.services;
 
-import org.springframework.security.core.userdetails.User;
+import io.paradigm.mesplusbackend.models.mesUserDetails;
+import io.paradigm.mesplusbackend.repo.UserRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import io.paradigm.mesplusbackend.models.User;
 
-import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
     /// AuthenticationProvider
+
+    @Autowired
+    UserRepo userRepo;
+
+    public MyUserDetailsService(UserRepo userRepo) {
+        this.userRepo = userRepo;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         /// Check if the username is in your list/database
-        if (!username.equals("alvin")) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
+        Optional<User> user = userRepo.findByUserName(username);
 
-        return new User("alvin","foo", new ArrayList<>());
+        user.orElseThrow(()-> new UsernameNotFoundException("User not found with username: " + username));
+        return user.map(mesUserDetails::new).get();
+
     }
 }
+        //        if (!username.equals("alvin")) {
+//            throw new UsernameNotFoundException("User not found with username: " + username);
+//        }
+//
+//        return new User("alvin","foo", new ArrayList<>());
+
 
 
 /*
