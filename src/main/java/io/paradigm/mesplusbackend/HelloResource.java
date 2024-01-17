@@ -28,6 +28,10 @@ public class HelloResource {
         return "Hello World";
     }
 
+    @RequestMapping("/admin")
+    public String admin(){
+        return "Hello Admin";
+    }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
@@ -45,6 +49,5 @@ public class HelloResource {
                     .loadUserByUsername(authenticationRequest.getUsername());
             final String jwt = jwtTokenUtil.generateToken(userDetails);
             return ResponseEntity.ok(new AuthenticationResponse(jwt));
-
     }
 }

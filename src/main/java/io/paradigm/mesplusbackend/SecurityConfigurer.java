@@ -35,8 +35,13 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and() /// To add CorsConfigurationSource below
                 .csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate","/*","/assets/**").permitAll()
-                .anyRequest().authenticated()
+                .authorizeRequests()
+                    .mvcMatchers("/admin").hasRole("ADMIN")
+                    .antMatchers("/authenticate","/","/assets/**").permitAll()
+                        /// Need to create an endpoint /inventory
+                        // I think you have don't need to do authorization with regards to VIEW such as html, routing, Outlet,
+                        // Use authorization only on REST or getting data from backend.
+                    .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
@@ -54,6 +59,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        /// Set CORS for using VS Code for front-end during development
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST"));

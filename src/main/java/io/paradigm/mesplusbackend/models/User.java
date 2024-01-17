@@ -1,7 +1,5 @@
 package io.paradigm.mesplusbackend.models;
 
-import org.springframework.security.core.GrantedAuthority;
-
 import javax.persistence.*;
 
 
@@ -50,7 +48,7 @@ public class User {
     }
 
     public void setActive(boolean active) {
-        active = active;
+        this.active = active;
     }
 
     public void setRoles(String roles) {
