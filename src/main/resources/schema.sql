@@ -11,3 +11,9 @@ CREATE TABLE IF NOT EXISTS users (
   WHERE NOT EXISTS (
       SELECT 1 FROM users WHERE user_name = 'user'
   );
+
+  INSERT INTO users (user_name, password, active, roles)
+    SELECT 'manager', 'pass', FALSE, "ROLE_ADMIN"
+    WHERE NOT EXISTS (
+        SELECT 1 FROM users WHERE user_name = 'manager'
+    );
