@@ -37,7 +37,9 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                     .mvcMatchers("/admin").hasRole("ADMIN")
-                    .antMatchers("/authenticate","/","/assets/**","/ws/**","/topic/**","/app/**","/vite.svg").permitAll()
+                    .antMatchers("/authenticate",
+                            "/","/assets/**","/ws/**","/topic/**"
+                            ,"/app/**","/vite.svg","/actuator/**").permitAll()
                         /// Need to create an endpoint /inventory
                         // I think you have don't need to do authorization with regards to VIEW such as html, routing, Outlet,
                         // Use authorization only on REST or getting data from backend.
