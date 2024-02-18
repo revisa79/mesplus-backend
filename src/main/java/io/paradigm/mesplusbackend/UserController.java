@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 
-public class HelloResource {
+public class UserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;

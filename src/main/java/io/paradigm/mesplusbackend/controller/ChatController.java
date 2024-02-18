@@ -1,5 +1,5 @@
 package io.paradigm.mesplusbackend.controller;
-import io.paradigm.mesplusbackend.WebSocketEventListener;
+import io.paradigm.mesplusbackend.models.ChatMessage;
 import io.paradigm.mesplusbackend.repo.ChatMessageRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
-import io.paradigm.mesplusbackend.models.ChatMessage;
 @Controller
 public class ChatController {
     @Autowired
@@ -35,4 +34,5 @@ public class ChatController {
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
         return chatMessage;
     }
+
 }
