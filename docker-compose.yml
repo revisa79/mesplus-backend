@@ -3,7 +3,7 @@ version: '3.8'  # Specify Docker Compose file format version
 services:
   mysql:
     image: mysql:latest  # Use the latest MySQL image
-    container_name: mesplus-mysql  # Optional container name
+    container_name: mesplus-mysql-compose  # Optional container name
     restart: always  # Restart the container if it stops
     ports:
       - "3306:3306"  # Map host port 3306 to container port 3306
@@ -12,7 +12,8 @@ services:
       MYSQL_DATABASE: mydatabase  # Create a database named "my_database"
     volumes:
       - mysql-data:/var/lib/mysql  # Create a volume to persist data
-
+      - ./volumes/mysq_mesplus_backup.sql:/docker-entrypoint-initdb.d/backup.sql
+      - ./volumes/init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   mysql-data:  # Define the volume
