@@ -1,4 +1,4 @@
 -- init.sql
 CREATE DATABASE IF NOT EXISTS mydatabase;
 USE mydatabase;
-SOURCE /docker-entrypoint-initdb.d/mysq_mesplus_backup.sql;
+SOURCE /docker-entrypoint-initdb.d/backup.sql;
