@@ -21,7 +21,7 @@ services:
       MYSQL_ROOT_PASSWORD: pass  # Set the root password
       MYSQL_DATABASE: mydatabase  # Create a database named "my_database"
     volumes:
-      - mysql-data:/var/lib/mysql  # Create a volume to persist data
+      - mysql-data:/var/lib/mysql  # Create a volume to persist data. This directory is in the container but mapped to certain folder of host. 
       - ./volumes/backup.sql:/docker-entrypoint-initdb.d/backup.sql
       - ./volumes/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
@@ -32,5 +32,9 @@ services:
       timeout: 10s  
 
 volumes:
-  mysql-data:  # Define the volume
-    driver: local
+  mysql-data:                             # Define the volume
+    driver: local                         # The driver: local, you're instructing Docker to create a volume that persists data locally on the host machine. 
+                                          # This means the data stored in this volume will persist even if the container is removed or restarted, 
+                                          # as long as the volume itself is not deleted.
+                                          # This directory is usually located in /var/lib/docker/volumes/ on Linux, 
+                                          # but the exact location can vary depending on your Docker setup and operating system.
