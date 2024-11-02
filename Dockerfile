@@ -3,6 +3,9 @@
 FROM maven:3.8.6-openjdk-11-slim AS build
 WORKDIR /app
 COPY pom.xml .
+# Download dependencies, this step is cached unless pom.xml changes
+RUN mvn dependency:go-offline -B
+
 COPY src ./src
 RUN mvn clean package -DskipTests
 
