@@ -10,7 +10,10 @@ services:
         condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mydatabase
-  
+      LOGIN_BACKEND_URL: http://35.206.223.102:8080
+      APP_HELLO_URL: http://35.206.223.102:8080
+      CHAT_BACKEND_URL: http://35.206.223.102:8080 
+      WS_BACKEND_URL: ws://localhost:8080 
   mysql:
     image: mysql:8.4.2  # Use the latest MySQL image
     container_name: mesplus-mysql-compose  # Optional container name
