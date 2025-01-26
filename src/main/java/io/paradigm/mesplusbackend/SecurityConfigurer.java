@@ -3,6 +3,7 @@ package io.paradigm.mesplusbackend;
 import io.paradigm.mesplusbackend.filters.JwtRequestFilter;
 import io.paradigm.mesplusbackend.services.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -17,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
+import java.util.List;
 
 @EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
@@ -25,6 +27,8 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    //@Value("${VITE_APP_HELLO_URL:http://localhost:8080}") // Inject the environment variable
+    //private String viteAppHelloUrl;
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(myUserDetailService);
@@ -63,6 +67,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         /// Set CORS for using VS Code for front-end during development
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+
         //configuration.setAllowedMethods(Arrays.asList("GET", "POST"));
         //configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));

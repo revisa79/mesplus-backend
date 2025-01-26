@@ -1,5 +1,7 @@
 version: '3.8'  # Specify Docker Compose file format version
 
+### MUST ALWAYS RUN WITH ENV PROD ----->     docker compose --env-file .env.prod up -d
+
 services:
   my-app:
     build: .
@@ -10,7 +12,12 @@ services:
         condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mydatabase
-  
+      ### Place at .env.prod file
+      #VITE_LOGIN_BACKEND_URL: http://35.206.223.102:8080
+      #VITE_APP_HELLO_URL: http://35.206.223.102:8080
+      #VITE_CHAT_BACKEND_URL: http://35.206.223.102:8080 
+      #VITE_WS_BACKEND_URL: ws://localhost:8080 
+
   mysql:
     image: mysql:8.4.2  # Use the latest MySQL image
     container_name: mesplus-mysql-compose  # Optional container name
