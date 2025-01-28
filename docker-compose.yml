@@ -1,4 +1,3 @@
-version: '3.8'  # Specify Docker Compose file format version
 
 ### MUST ALWAYS RUN WITH ENV PROD ----->     docker compose --env-file .env.prod up -d
 
