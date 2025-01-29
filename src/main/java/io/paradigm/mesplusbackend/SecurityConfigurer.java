@@ -3,7 +3,6 @@ package io.paradigm.mesplusbackend;
 import io.paradigm.mesplusbackend.filters.JwtRequestFilter;
 import io.paradigm.mesplusbackend.services.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -19,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 @EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
@@ -66,14 +66,24 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         /// Set CORS for using VS Code for front-end during development
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        //configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        /// Always allow localhost for development
+        List<String> allowedOrigins = new ArrayList<>(Arrays.asList("http://localhost:5173"));
+
+        /// Step 1: Add the server IP dynamically from the environment variable
+        String serverIp = System.getenv("VITE_APP_HELLO_URL");
+        System.out.println("ServerIP : " + serverIp);
+        if (serverIp != null && !serverIp.isEmpty()) {
+            allowedOrigins.add("http://" + serverIp); // Assuming HTTP, adjust if needed
+        }
+        configuration.setAllowedOrigins(allowedOrigins);
 
         //configuration.setAllowedMethods(Arrays.asList("GET", "POST"));
         //configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowCredentials(true);
-
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
