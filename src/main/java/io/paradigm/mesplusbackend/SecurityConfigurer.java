@@ -2,6 +2,7 @@ package io.paradigm.mesplusbackend;
 
 import io.paradigm.mesplusbackend.filters.JwtRequestFilter;
 import io.paradigm.mesplusbackend.services.MyUserDetailsService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 @EnableWebSecurity
+@Slf4j
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyUserDetailsService myUserDetailService;
@@ -72,7 +74,8 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
         /// Step 1: Add the server IP dynamically from the environment variable
         String serverIp = System.getenv("VITE_APP_HELLO_URL");
-        System.out.println("ServerIP : " + serverIp);
+        log.trace("ServerIP : " + serverIp);
+
         if (serverIp != null && !serverIp.isEmpty()) {
             allowedOrigins.add("http://" + serverIp); // Assuming HTTP, adjust if needed
         }

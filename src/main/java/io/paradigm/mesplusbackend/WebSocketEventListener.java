@@ -13,20 +13,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 
-@Component
+//@ComponentgetLogger(WebSocketEventListener.class);
 @Slf4j
 @RequiredArgsConstructor
 public class WebSocketEventListener {
 
     private final SimpMessageSendingOperations messagingTemplate;
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
+    //private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String username = (String) headerAccessor.getSessionAttributes().get("username");
         if (username != null) {
-            logger.debug("Debug - user disconnected: {}", username);
+            log.debug("Debug - user disconnected: {}", username);
             var chatMessage = ChatMessage.builder()
                     .type(MessageType.LEAVE)
                     .sender(username)
