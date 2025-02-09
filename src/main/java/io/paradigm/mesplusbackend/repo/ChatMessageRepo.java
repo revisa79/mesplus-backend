@@ -10,6 +10,4 @@ public interface ChatMessageRepo extends JpaRepository<ChatMessage, Long> {
 
     @Query("SELECT cm FROM ChatMessage cm ORDER BY cm.id DESC")
     List<ChatMessage> findTop100ByOrderByIdDesc();
-
-
 }

@@ -5,6 +5,8 @@ import lombok.*;
 import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat; // Import for formatting
 
 @Builder
 @Setter
@@ -22,5 +24,6 @@ public class ChatMessage {
     private String content;
     private String sender;
 
-
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") // Important for parsing
+    private LocalDateTime timestamp;
 }
