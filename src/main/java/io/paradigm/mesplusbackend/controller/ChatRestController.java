@@ -2,6 +2,8 @@ package io.paradigm.mesplusbackend.controller;
 
 import io.paradigm.mesplusbackend.models.ChatMessage;
 import io.paradigm.mesplusbackend.repo.ChatMessageRepo;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,10 +23,12 @@ public class ChatRestController {
     @GetMapping("/messages")
     public ResponseEntity<List<ChatMessage>> getLast100Messages() {
         /// Fetch the top 100 messages ordered by id in descending order
-        /// Pageable pageable = PageRequest.of(0, 100);
+        Pageable pageable = PageRequest.of(0, 100);
         /// TODO: Use this by adding More button at the top of chatmenu
         /// TODO: Do NOT use pageable in webchat. See footnotes below.
-        List<ChatMessage> messages = chatMessageRepo.findTop100ByOrderByIdDesc();
+        /// TODO: Set the limit to the last message seen by the user.
+
+        List<ChatMessage> messages = chatMessageRepo.findTop100ByOrderByIdDesc(pageable);
         /// Reverse the order of the list
         Collections.reverse(messages);
         return ResponseEntity.ok(messages);
