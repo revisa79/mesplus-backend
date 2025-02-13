@@ -40,19 +40,21 @@ public class UserController {
         try {
             log.trace("UserController /authenticate " + authenticationRequest.getUsername() + " : " + authenticationRequest.getPassword());
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequest.getUsername(), authenticationRequest.getPassword())
             );
         } catch (BadCredentialsException e) {
             log.trace("UserController /authenticate caught a BadCredentialException ");
             throw new Exception("Incorrect username or password", e);
         }
+        /// Authentication passed. Generating token...
+        /// Get UserDetail
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        log.trace("UserController  /authenticate got the UserDetails");
 
-        /// We only get the UserDetail here because generating the token accepts UserDetails object
-            final UserDetails userDetails = userDetailsService
-                    .loadUserByUsername(authenticationRequest.getUsername());
-            log.trace("UserController  /authenticate got the UserDetails");
-            final String jwt = jwtTokenUtil.generateToken(userDetails);
-            log.trace("UseController  /authenticate generateToken " + jwt);
-            return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        /// Generate token using jwt utility
+        final String jwt = jwtTokenUtil.generateToken(userDetails);
+        log.trace("UseController  /authenticate generateToken " + jwt);
+        return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 }
