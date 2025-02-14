@@ -2,6 +2,8 @@ package io.paradigm.mesplusbackend.controller;
 
 import io.paradigm.mesplusbackend.models.AuthenticationRequest;
 import io.paradigm.mesplusbackend.models.AuthenticationResponse;
+import io.paradigm.mesplusbackend.models.LoginParamType;
+import io.paradigm.mesplusbackend.services.LoginListNotifService;
 import io.paradigm.mesplusbackend.services.MyUserDetailsService;
 import io.paradigm.mesplusbackend.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +15,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+
 @RestController
 @Slf4j
 public class UserController {
-
+    @Autowired
+    private LoginListNotifService loginListNotifService;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -35,7 +41,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletRequest request) throws Exception {
         /// Authentication of username and password from client happened in try-catch below
         try {
             log.trace("UserController /authenticate " + authenticationRequest.getUsername() + " : " + authenticationRequest.getPassword());
@@ -55,6 +61,22 @@ public class UserController {
         /// Generate token using jwt utility
         final String jwt = jwtTokenUtil.generateToken(userDetails);
         log.trace("UseController  /authenticate generateToken " + jwt);
+
+        /// Saving name,time and client IP to database for RabbitMQ->Notif
+        String clientIp = request.getHeader("X-Forwarded-For");
+        if (clientIp == null || clientIp.isEmpty()) {
+            clientIp = request.getRemoteAddr();
+        }
+        loginListNotifService.saveLogin(
+                LoginParamType.builder()
+                    .name(userDetails.getUsername())
+                    .logintime(LocalDateTime.now())
+                    .loginip(clientIp)
+                    .build());
+        log.info("RemoteAddr: " + request.getRemoteAddr());
+        log.info("X-Forwarded-For: " + request.getHeader("X-Forwarded-For"));
+        log.info("X-Real-IP: " + request.getHeader("X-Real-IP"));
+        
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 }

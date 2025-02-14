@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "loginlistnotif")
-public class LoginListType {
+public class LoginParamType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
