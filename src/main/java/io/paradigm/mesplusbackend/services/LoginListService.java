@@ -1,22 +1,22 @@
 package io.paradigm.mesplusbackend.services;
 
 import io.paradigm.mesplusbackend.models.LoginParamType;
-import io.paradigm.mesplusbackend.repo.LoginListAndNotif;
+import io.paradigm.mesplusbackend.repo.LoginList;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LoginListNotifService {
+public class LoginListService {
 
-    private final LoginListAndNotif loginListAndNotif;
+    private final LoginList loginList;
 
-    public LoginListNotifService(LoginListAndNotif loginListAndNotif) {
-        this.loginListAndNotif = loginListAndNotif;
+    public LoginListService(LoginList loginList) {
+        this.loginList = loginList;
     }
 
     public LoginParamType saveLogin(LoginParamType loginParam){
         if(loginParam.getName().isEmpty()){
             throw new IllegalArgumentException("Login name cannot be empty");
         }
-        return loginListAndNotif.save(loginParam);
+        return loginList.save(loginParam);
     }
 }

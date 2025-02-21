@@ -3,7 +3,7 @@ package io.paradigm.mesplusbackend.controller;
 import io.paradigm.mesplusbackend.models.AuthenticationRequest;
 import io.paradigm.mesplusbackend.models.AuthenticationResponse;
 import io.paradigm.mesplusbackend.models.LoginParamType;
-import io.paradigm.mesplusbackend.services.LoginListNotifService;
+import io.paradigm.mesplusbackend.services.LoginListService;
 import io.paradigm.mesplusbackend.services.MyUserDetailsService;
 import io.paradigm.mesplusbackend.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Slf4j
 public class UserController {
     @Autowired
-    private LoginListNotifService loginListNotifService;
+    private LoginListService loginListNotifService;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -49,34 +49,36 @@ public class UserController {
                     new UsernamePasswordAuthenticationToken(
                             authenticationRequest.getUsername(), authenticationRequest.getPassword())
             );
+            /// Authentication successful. Get UserDetails
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+            log.trace("UserController  /authenticate got the UserDetails");
+
+            /// Generate token using jwt utility
+            final String jwt = jwtTokenUtil.generateToken(userDetails);
+            log.trace("UseController  /authenticate generateToken " + jwt);
+
+            /// Saving name,time and client IP to database for RabbitMQ->Notif
+            String clientIp = request.getHeader("X-Forwarded-For");
+            if (clientIp == null || clientIp.isEmpty()) {
+                clientIp = request.getRemoteAddr();
+            }
+            loginListNotifService.saveLogin(
+                    LoginParamType.builder()
+                            .name(userDetails.getUsername())
+                            .logintime(LocalDateTime.now())
+                            .loginip(clientIp)
+                            .build());
+            log.info("RemoteAddr: " + request.getRemoteAddr());
+            log.info("X-Forwarded-For: " + request.getHeader("X-Forwarded-For"));
+            log.info("X-Real-IP: " + request.getHeader("X-Real-IP"));
+            /// Return success response with JWT
+            return ResponseEntity.ok(new AuthenticationResponse(jwt));
         } catch (BadCredentialsException e) {
             log.trace("UserController /authenticate caught a BadCredentialException ");
-            throw new Exception("Incorrect username or password", e);
+            return ResponseEntity.status(401).body("Incorrect username or password");
+        }catch (Exception e) {
+            log.error("Unexpected error in authentication", e);
+            return ResponseEntity.status(500).body("Internal Server Error");
         }
-        /// Authentication passed. Generating token...
-        /// Get UserDetail
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        log.trace("UserController  /authenticate got the UserDetails");
-
-        /// Generate token using jwt utility
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
-        log.trace("UseController  /authenticate generateToken " + jwt);
-
-        /// Saving name,time and client IP to database for RabbitMQ->Notif
-        String clientIp = request.getHeader("X-Forwarded-For");
-        if (clientIp == null || clientIp.isEmpty()) {
-            clientIp = request.getRemoteAddr();
-        }
-        loginListNotifService.saveLogin(
-                LoginParamType.builder()
-                    .name(userDetails.getUsername())
-                    .logintime(LocalDateTime.now())
-                    .loginip(clientIp)
-                    .build());
-        log.info("RemoteAddr: " + request.getRemoteAddr());
-        log.info("X-Forwarded-For: " + request.getHeader("X-Forwarded-For"));
-        log.info("X-Real-IP: " + request.getHeader("X-Real-IP"));
-        
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 }
