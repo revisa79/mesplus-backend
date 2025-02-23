@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "loginlistnotif")
+@Table(name = "loginlist")
 public class LoginParamType {
 
     @Id
