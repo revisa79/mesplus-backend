@@ -23,8 +23,9 @@ public class NotificationQueue {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String message; //JSON String
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status = "PENDING"; // Example: PENDING, SENT, FAILED
+    private NotificationStatus status = NotificationStatus.PENDING; // Example: PENDING, SENT, FAILED
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
