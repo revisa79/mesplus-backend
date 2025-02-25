@@ -38,6 +38,18 @@ services:
       start_period: 30s
       timeout: 10s  
 
+  rabbitmq:
+    image: rabbitmq:3.12-management  # Includes the web UI for monitoring
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"  # RabbitMQ main service port
+      - "15672:15672" # Management UI port
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - ./rabbitmq_data:/var/lib/rabbitmq #This will store the data inside your current project directory (./rabbitmq_data).
 volumes:
   mysql-data:                             # Define the volume
     driver: local                         # The driver: local, you're instructing Docker to create a volume that persists data locally on the host machine. 
@@ -45,3 +57,4 @@ volumes:
                                           # as long as the volume itself is not deleted.
                                           # This directory is usually located in /var/lib/docker/volumes/ on Linux, 
                                           # but the exact location can vary depending on your Docker setup and operating system.
+  rabbitmq_data:
