@@ -9,19 +9,19 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
   INSERT INTO users (user_name, password, active, roles)
-    SELECT 'user', 'pass', FALSE, "ROLE_ADMIN"
+    SELECT 'user', 'pass', TRUE, "ROLE_ADMIN"
     WHERE NOT EXISTS (
         SELECT 1 FROM users WHERE user_name = 'user'
     );
 
   INSERT INTO users (user_name, password, active, roles)
-    SELECT 'manager', 'pass', FALSE, "ROLE_ADMIN"
+    SELECT 'manager', 'pass', TRUE, "ROLE_ADMIN"
     WHERE NOT EXISTS (
         SELECT 1 FROM users WHERE user_name = 'manager'
     );
 
   INSERT INTO users (user_name, password, active, roles)
-      SELECT 'ShelbyT', 'pass', FALSE, "ROLE_ADMIN"
+      SELECT 'ShelbyT', 'pass', TRUE, "ROLE_ADMIN"
       WHERE NOT EXISTS (
           SELECT 1 FROM users WHERE user_name = 'ShelbyT'
       );

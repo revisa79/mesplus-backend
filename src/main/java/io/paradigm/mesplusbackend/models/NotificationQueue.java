@@ -24,13 +24,13 @@ public class NotificationQueue {
     private String message; //JSON String
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'PENDING'")
     private NotificationStatus status = NotificationStatus.PENDING; // Example: PENDING, SENT, FAILED
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
     private int retryCount = 0; // Tracks the number of retries
 
     public NotificationQueue() {}

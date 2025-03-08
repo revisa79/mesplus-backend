@@ -10,11 +10,14 @@ public class RabbitMQConfig {
     @Bean
     public Queue queue(){
         return new Queue("db_changes_queue",true);
+        //return QueueBuilder.durable("db_changes_queue")
+        //        .withArgument("x-queue-mode", "lazy") // ✅ Enable Lazy Queue Mode
+        //        .build();
     }
 
     @Bean
     public Exchange exchange(){
-        return new DirectExchange("db_changes_exchange");
+        return new DirectExchange("db_changes_exchange",true,false);
     }
 
     @Bean

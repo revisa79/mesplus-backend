@@ -48,6 +48,7 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
+      RABBITMQ_NODENAME: rabbit@rabbitmq  # Important! Encountered messages don't persist every restart
     volumes:
       - ./rabbitmq_data:/var/lib/rabbitmq #This will store the data inside your current project directory (./rabbitmq_data).
 volumes:
@@ -58,3 +59,5 @@ volumes:
                                           # This directory is usually located in /var/lib/docker/volumes/ on Linux, 
                                           # but the exact location can vary depending on your Docker setup and operating system.
   rabbitmq_data:
+    name: mesplus-backend_rabbitmq_data   # Set a fixed volume name
+    driver: local
