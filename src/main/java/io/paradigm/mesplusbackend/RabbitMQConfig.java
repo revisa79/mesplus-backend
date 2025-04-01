@@ -7,21 +7,21 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    @Bean
-    public Queue queue(){
-        return new Queue("db_changes_queue",true);
-        //return QueueBuilder.durable("db_changes_queue")
-        //        .withArgument("x-queue-mode", "lazy") // ✅ Enable Lazy Queue Mode
-        //        .build();
-    }
+    public static final String QUEUE_NAME = "db_changes_queue";
+    public static final String EXCHANGE_NAME = "db_changes_exchange";
+    public static final String ROUTING_KEY = "routing-key";
 
     @Bean
+    public Queue queue(){
+        return QueueBuilder.durable(QUEUE_NAME).build();
+    }
+    @Bean
     public Exchange exchange(){
-        return new DirectExchange("db_changes_exchange",true,false);
+        return new DirectExchange(EXCHANGE_NAME,true,false);
     }
 
     @Bean
     public Binding binding(Queue queue, Exchange exchange) {
-        return BindingBuilder.bind(queue).to((DirectExchange) exchange).with("routing-key");
+        return BindingBuilder.bind(queue).to((DirectExchange) exchange).with(ROUTING_KEY);
     }
 }

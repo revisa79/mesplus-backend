@@ -1,5 +1,6 @@
 package io.paradigm.mesplusbackend.services;
 
+import io.paradigm.mesplusbackend.RabbitMQConfig;
 import io.paradigm.mesplusbackend.models.NotificationQueue;
 import io.paradigm.mesplusbackend.repo.NotificationQueueRepo;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class NotificationSenderService {
         log.info("Scheduled notification process...");
         if (!isRabbitMQAvailable()) {
             log.info("RabbitMQ is down. Skipping processing notification...");
-            return; // Skip retrying if RabbitMQ is down
+            return; /// Skip retrying if RabbitMQ is down
         }
 
         List<NotificationQueue> pendingNotifications = notificationQueueRepo.findByStatus(NotificationStatus.PENDING);
@@ -40,15 +41,14 @@ public class NotificationSenderService {
         for (NotificationQueue notification : pendingNotifications) {
             log.info("Notification Queue : Trying to send message - " + notification.getMessage());
             try {
-                //rabbitTemplate.convertAndSend("db_changes_exchange", "routing-key", notification.getMessage());
                 /** Making the message in RabbitMQ durable **/
                 MessageProperties properties = new MessageProperties();
                 properties.setDeliveryMode(MessageDeliveryMode.PERSISTENT); // Ensure message is persistent
                 Message message = new Message(notification.getMessage().getBytes(), properties);
-                rabbitTemplate.send("db_changes_exchange", "routing-key", message);
+                rabbitTemplate.send(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY, message);
 
-                notification.setStatus(NotificationStatus.SENT);  // Update status
-                notificationQueueRepo.save(notification); // Save to DB
+                notification.setStatus(NotificationStatus.SENT);  /// Update status of object
+                notificationQueueRepo.save(notification); /// Save to DB
 
             } catch (Exception e) {
                 notification.setRetryCount(notification.getRetryCount() + 1);
@@ -56,17 +56,17 @@ public class NotificationSenderService {
                 if (notification.getRetryCount() >= 5) {
                     notification.setStatus(NotificationStatus.FAILED);
                 }
-                notificationQueueRepo.save(notification); // Save to DB
+                notificationQueueRepo.save(notification); /// Save to DB
             }
         }
     }
 
     private boolean isRabbitMQAvailable() {
         try {
-            rabbitTemplate.execute(channel -> true); // Test if RabbitMQ connection works
+            rabbitTemplate.execute(channel -> true); /// Test if RabbitMQ connection works to prevent retry.
             return true;
         } catch (Exception e) {
-            return false; // RabbitMQ is completely down
+            return false; /// RabbitMQ is completely down
         }
     }
 }

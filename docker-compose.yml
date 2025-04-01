@@ -9,6 +9,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mydatabase
       ## Environment variable use for CORS 
@@ -16,7 +18,11 @@ services:
       ## THESE ARE VARIABLES FOR FRONTEND AND WERE INJECTED TO THE BUILD DURING NPM RUN BUILD
       #VITE_LOGIN_BACKEND_URL: http://35.206.223.102:8080
       #VITE_CHAT_BACKEND_URL: http://35.206.223.102:8080 
-      #VITE_WS_BACKEND_URL: ws://localhost:8080 
+      #VITE_WS_BACKEND_URL: ws://localhost:8080
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: admin
+      SPRING_RABBITMQ_PASSWORD: admin
 
   mysql:
     image: mysql:8.4.2  # Use the latest MySQL image
@@ -51,6 +57,12 @@ services:
       RABBITMQ_NODENAME: rabbit@rabbitmq  # Important! Encountered messages don't persist every restart
     volumes:
       - ./rabbitmq_data:/var/lib/rabbitmq #This will store the data inside your current project directory (./rabbitmq_data).
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 volumes:
   mysql-data:                             # Define the volume
     driver: local                         # The driver: local, you're instructing Docker to create a volume that persists data locally on the host machine. 
