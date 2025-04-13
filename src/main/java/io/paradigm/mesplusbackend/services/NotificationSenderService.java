@@ -29,14 +29,14 @@ public class NotificationSenderService {
 
     @Scheduled(fixedDelay = 10000) // Runs every 10 seconds
     public void sendPendingNotifications() {
-        log.info("Scheduled notification process...");
+        log.trace("Scheduled notification process...");
         if (!isRabbitMQAvailable()) {
             log.info("RabbitMQ is down. Skipping processing notification...");
             return; /// Skip retrying if RabbitMQ is down
         }
 
         List<NotificationQueue> pendingNotifications = notificationQueueRepo.findByStatus(NotificationStatus.PENDING);
-        log.info("Notification Queue : Total of "+ pendingNotifications.size());
+        log.trace("Notification Queue : Total of "+ pendingNotifications.size());
         /// Sending each PENDING notification_queue to RabbitMQ
         for (NotificationQueue notification : pendingNotifications) {
             log.info("Notification Queue : Trying to send message - " + notification.getMessage());
